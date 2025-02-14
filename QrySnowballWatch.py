@@ -12,6 +12,18 @@ def set_xueqiu_token(token, u):
     os.environ["XQ_U"] = u
 
 
+# 读取本地文件雪球用户名
+def load_cname(file_path):
+    cname_list = None
+    # 读取 cname.txt 文件内容，存入列表
+    with open(file_path, "r", encoding="utf-8") as file:
+        cname_list = [line.strip() for line in file if line.strip()]  # 去除首尾空白行
+    if cname_list:
+        return cname_list
+    else:
+        raise ValueError('请先将完整雪球用户名写入files/cname.txt中，已换行分隔')
+
+
 # 获取自选股
 # https://stock.xueqiu.com/v5/stock/portfolio/stock/list.json?category=1&size=1000&uid=3598214045
 def get_user_watchstock(token, u, uid):
@@ -122,7 +134,7 @@ def get_target_id(respon_json, target_name):
     return None  # 如果没找到，返回 None
 
 
-# 处理结果
+# 处理结果:读取本地文件
 def load_previous_result(file_path):
     """从本地文件加载上次保存的 stocks 列表"""
     if os.path.exists(file_path):
@@ -190,8 +202,8 @@ def file_diff(file, result):
 # 需要关闭vpn才能运行request请求！！！
 if __name__ == "__main__":
 
-    # 也可set_xueqiu_token方法手动设置 token，也可以环境变量设置
-    set_xueqiu_token("1b9ae35821471e7ed712b73c89cf680c1c6ce670", "3525189939")
+    # todo 也可set_xueqiu_token方法手动设置 token和自己的uid，也可以环境变量设置
+    # set_xueqiu_token("xxxc", "3xxxx")
 
     # 环境变量获取token，u。
     xq_a_token = os.getenv("XQ_A_TOKEN")
@@ -204,38 +216,40 @@ if __name__ == "__main__":
     # user_id = "2632831661"  # 罗
     # user_id = "2093337947"  # 边大
 
-    cname = 'Sevny'  # 莫大
+    # cname = 'Sevny'  # 莫大
     # cname = '边城浪子1986' # 边大
     # cname = '罗洄头'  # 罗
-    user_id = get_userid_by_cname(xq_a_token, u, cname)
-    print(user_id)
+    cname_list = load_cname('files/cname.txt')
+    for cname in cname_list:
+        user_id = get_userid_by_cname(xq_a_token, u, cname)
+        print(user_id)
 
-    # 查询某用户自选股
-    watchstock = get_user_watchstock(xq_a_token, u, user_id)
-    print(watchstock)
+        # 查询某用户自选股
+        watchstock = get_user_watchstock(xq_a_token, u, user_id)
+        print(watchstock)
 
-    # 获取user_id后4为作为文件名区分不同查询用户的文件
-    userid_tail = user_id[-4:]
-    # 便于分清对应用户的文件，用字典
-    user_file_name = None
-    if userid_tail == '4045':
-        user_file_name = 'Mo'
-    elif userid_tail == '7947':
-        user_file_name = 'Bian'
-    elif userid_tail == '1661':
-        user_file_name = 'Luo'
-    else:
-        # print('请添加本地文件中文映射方便查看文件！默认UNKOWN')
-        user_file_name = userid_tail
+        # 获取user_id后4为作为文件名区分不同查询用户的文件
+        userid_tail = user_id[-4:]
+        # 便于分清对应用户的文件，用字典
+        user_file_name = None
+        if userid_tail == '4045':
+            user_file_name = 'Mo'
+        elif userid_tail == '7947':
+            user_file_name = 'Bian'
+        elif userid_tail == '1661':
+            user_file_name = 'Luo'
+        else:
+            # print('请添加本地文件中文映射方便查看文件！默认UNKOWN')
+            user_file_name = userid_tail
 
-    # 本地股票文件--stocksMo.json内容以最新关注为首先后排序，而add新增关注则无序。
-    stocks_file = f"files/stocks{user_file_name}.json"
-    file_diff(stocks_file, watchstock)  # 比较是否有新增关注股票
+        # 本地股票文件--stocksMo.json内容以最新关注为首先后排序，而add新增关注则无序。
+        stocks_file = f"files/stocks{user_file_name}.json"
+        file_diff(stocks_file, watchstock)  # 比较是否有新增关注股票
 
-    # 查询某用户的关注列表
-    all_names = get_xueqiu_friends_all(xq_a_token, u, user_id)
-    print(f"总共获取到 {len(all_names)} 个好友名称：{all_names}")
+        # 查询某用户的关注列表
+        all_names = get_xueqiu_friends_all(xq_a_token, u, user_id)
+        print(f"总共获取到 {len(all_names)} 个好友名称：{all_names}")
 
-    # 本地关注列表文件
-    watch_list_file = f'files/watchlist{user_file_name}.json'
-    file_diff(watch_list_file, all_names)  # 比较是否有新增关注用户
+        # 本地关注列表文件
+        watch_list_file = f'files/watchlist{user_file_name}.json'
+        file_diff(watch_list_file, all_names)  # 比较是否有新增关注用户
