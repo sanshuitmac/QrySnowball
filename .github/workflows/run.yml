@@ -29,3 +29,9 @@ jobs:
           XQ_U: ${{ secrets.XQ_U }}
         run: python src/QrySnowballWatch.py
 
+      - name: Upload generated files
+        uses: actions/upload-artifact@v3
+        with:
+          name: generated-files
+          path: files/
+
