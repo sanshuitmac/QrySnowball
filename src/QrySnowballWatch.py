@@ -4,8 +4,8 @@ import json
 from datetime import datetime
 
 
-# todo 登录后浏览器获取xq_a_token  。 自己uid：3525189939  。罗洄头：2632831661  。莫大sevny：uid=3598214045
-# ios手机用stream抓取app上的token和uid：xq_a_token=XXXX;u=3525189939（固定）
+# todo 登录后浏览器获取xq_a_token
+# ios手机可用stream抓取app上的xq_a_token和uid：u
 def set_xueqiu_token(token, u):
     """手动设置 xq_a_token 和 u"""
     os.environ["XQ_A_TOKEN"] = token
@@ -21,7 +21,7 @@ def load_cname(file_path):
     if cname_list:
         return cname_list
     else:
-        raise ValueError('请先将完整雪球用户名写入files/cname.txt中，已换行分隔')
+        raise ValueError('请先将完整雪球用户名写入files/cname.txt中，以换行分隔')
 
 
 # 获取自选股
@@ -120,6 +120,7 @@ def get_userid_by_cname(token, u, cname):
         return get_target_id(respon_json, cname)
     else:
         print(f"请求失败，状态码: {response.status_code}, 响应: {response.text}")
+
         return None
 
 
@@ -211,18 +212,14 @@ if __name__ == "__main__":
     if not xq_a_token or not u:
         raise ValueError("请先设置 xq_a_token 和 u")
 
-    # todo 设定需要查询对象的uid（浏览器抓包）。 后面用请求获取，需要设定 用户名
-    # user_id = "3598214045"  # 莫大
-    # user_id = "2632831661"  # 罗
-    # user_id = "2093337947"  # 边大
-
-    # cname = 'Sevny'  # 莫大
-    # cname = '边城浪子1986' # 边大
-    # cname = '罗洄头'  # 罗
+    # 读取文件中的雪球用户名
     cname_list = load_cname('files/cname.txt')
     for cname in cname_list:
+        print(f'\n正在查询用户：【{cname}】的自选股和关注列表....')
         user_id = get_userid_by_cname(xq_a_token, u, cname)
-        print(user_id)
+        if not user_id:
+            print(f"请求失败。请检查files/cname.txt里雪球用户名，必须准确!")
+            continue
 
         # 查询某用户自选股
         watchstock = get_user_watchstock(xq_a_token, u, user_id)
@@ -230,7 +227,7 @@ if __name__ == "__main__":
 
         # 获取user_id后4为作为文件名区分不同查询用户的文件
         userid_tail = user_id[-4:]
-        # 便于分清对应用户的文件，用字典
+        # 便于分清部分已知用户：莫大、边大、罗洄头
         user_file_name = None
         if userid_tail == '4045':
             user_file_name = 'Mo'

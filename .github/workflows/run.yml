@@ -1,0 +1,31 @@
+# github actions的yml配置文件
+name: qurSnowballWatch
+on:
+  workflow_dispatch:
+  schedule:
+    # IMPORTANT: Set cron job in UTC timezone 。+8才是北京时间，每天10点05分
+    - cron: '05 2 * * *'
+  watch:
+    types: started
+
+jobs:
+  run-python-script:
+    runs-on: ubuntu-latest
+    # 定时，或者自己点击star则运行此workflow
+    if: github.event_name == 'schedule' || github.event_name == 'watch' && github.event.repository.owner.id == github.event.sender.id
+    
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: start run
+        env:
+          XQ_A_TOKEN: ${{ secrets.XQ_A_TOKEN }}
+          XQ_U: ${{ secrets.XQ_U }}
+        run: python src/QrySnowballWatch.py
+
