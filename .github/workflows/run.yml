@@ -31,12 +31,15 @@ jobs:
 
       # 自动提交工作流的文件（文件不能与gitignore冲突，目录从src开始）
       - name: Commit and push generated JSON files
+        env:
+          TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
           cd src/files/workflow_files
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           git commit -m "Add generated JSON files" || echo "No changes to commit"
-          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/sanshuitmac/QrySnowball.git HEAD:main
+          git remote set-url origin https://${TOKEN}@github.com/sanshuitmac/QrySnowball.git
+          git push origin HEAD:main
         
 
