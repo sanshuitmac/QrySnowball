@@ -29,17 +29,30 @@ jobs:
           XQ_U: ${{ secrets.XQ_U }}
         run: python src/QrySnowballWatch.py
 
-      # 自动提交工作流的文件（文件不能与gitignore冲突，目录从src开始）
-      - name: Commit and push generated JSON files
-        env:
-          TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      - name: Set up Git configuration
+          run: |
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
+
+      - name: Commit and push changes
         run: |
-          cd src/files/workflow_files
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Add generated JSON files" || echo "No changes to commit"
-          git remote set-url origin https://${TOKEN}@github.com/sanshuitmac/QrySnowball.git
-          git push origin HEAD:main
+          git add src/files/*.json
+          git commit -m "Add stocks.json file"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+      # 自动提交工作流的文件（文件不能与gitignore冲突，目录从src开始）
+#      - name: Commit and push generated JSON files
+#        env:
+#          TOKEN: ${{ secrets.ACCESS_TOKEN }}
+#        run: |
+#          cd src/files/workflow_files
+#          git config --global user.name "github-actions[bot]"
+#          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#          git add .
+#          git commit -m "Add generated JSON files" || echo "No changes to commit"
+#          git remote set-url origin https://${TOKEN}@github.com/sanshuitmac/QrySnowball.git
+#          git push origin HEAD:main
         
 
