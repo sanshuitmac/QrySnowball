@@ -33,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: generated-files
-          path: files/
+          path: src/files/
 
