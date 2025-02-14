@@ -29,13 +29,13 @@ jobs:
           XQ_U: ${{ secrets.XQ_U }}
         run: python src/QrySnowballWatch.py
 
-      # 第三步：设置 Git 配置
+      # 设置 Git 配置
       - name: Set up Git configuration
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      # 第四步：提交并推送多个文件
+      # 自动提交工作流的文件（文件不能与gitignore冲突，目录从src开始）
       - name: Commit and push generated files
         run: |
           git add src/files/workflow_files/*.json  
