@@ -38,7 +38,7 @@ jobs:
       # 第四步：提交并推送多个文件
       - name: Commit and push generated files
         run: |
-          git add files/*.json  
+          git add src/files/*.json  
           git commit -m "Add generated files"
           git push
         env:
