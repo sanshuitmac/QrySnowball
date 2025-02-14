@@ -155,7 +155,16 @@ def load_previous_result(file_path):
     return []  # 如果文件不存在，返回空列表
 
 
+def ensure_directory_exists(file_path):
+    """确保文件所在的目录存在"""
+    directory = file_path.parent
+    if not directory.exists():
+        directory.mkdir(parents=True, exist_ok=True)
+
+
 def save_current_result(file_path, result):
+    # 确保目录存在
+    ensure_directory_exists(file_path)
     """将当前 stocks 列表保存到本地文件"""
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=4)
