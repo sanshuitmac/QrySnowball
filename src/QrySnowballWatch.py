@@ -172,7 +172,7 @@ def compare_results(old_result, new_result):
     return list(added), list(removed)
 
 
-# 读取本地文件，比较两次程序运行后，发生变化的列表元素
+# 读取本地文件，比较两次程序运行后，发生变化的列表元素。 file是文件，不是str，没有rsplit方法
 def file_diff(file, result):
     # 读取本地存储的上次结果
     previous_result = load_previous_result(file)
@@ -183,14 +183,14 @@ def file_diff(file, result):
         if added:
             print("新增的关注:", added)
             # added文件名处理：按最后一个 "." 分割，确保只分割扩展名
-            name_part, ext = file.rsplit('.', 1)
+            name_part, ext = str(file).rsplit('.', 1)
             # 在文件名前添加 "_add"，并拼接回扩展名
             added_file = f"{name_part}_add.{ext}"  # file = stocksMo_add.json
             save_current_result(added_file, added)
         if removed:
             print("减少的关注:", removed)
             # added文件名处理：按最后一个 "." 分割，确保只分割扩展名
-            name_part, ext = file.rsplit('.', 1)
+            name_part, ext = str(file).rsplit('.', 1)
             # 在文件名前添加 "_add"，并拼接回扩展名
             rm_file = f"{name_part}_rm.{ext}"  # file = stocksMo_rm.json
             save_current_result(rm_file, removed)
