@@ -40,7 +40,6 @@ jobs:
         run: |
           git add src/files/workflow_files/*.json  
           git commit -m "Add generated files"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 提供的 token 来进行提交操作
+          git push https://${{ secrets.ACCESS_TOKEN }}@github.com/sanshuitmac/QrySnowball.git HEAD:main
+        
 
