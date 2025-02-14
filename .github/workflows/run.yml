@@ -1,5 +1,5 @@
 # github actions的yml配置文件
-name: qurSnowballWatch
+name: qrySnowballWatch
 on:
   workflow_dispatch:
   schedule:
