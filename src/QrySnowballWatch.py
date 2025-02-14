@@ -2,6 +2,7 @@ import os
 import requests
 import json
 from datetime import datetime
+from pathlib import Path
 
 
 # todo 登录后浏览器获取xq_a_token
@@ -213,7 +214,8 @@ if __name__ == "__main__":
         raise ValueError("请先设置 xq_a_token 和 u")
 
     # 读取文件中的雪球用户名
-    cname_list = load_cname('files/cname.txt')
+    cname_path = Path(__file__).parent / "files/cname.txt"
+    cname_list = load_cname(cname_path)
     for cname in cname_list:
         print(f'\n正在查询用户：【{cname}】的自选股和关注列表....')
         user_id = get_userid_by_cname(xq_a_token, u, cname)
