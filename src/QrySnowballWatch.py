@@ -201,6 +201,21 @@ def file_diff(file, result):
         print("关注列表无变化，无需更新。")
 
 
+# github工作流和本地运行，产生的文件放在不同的目录。（gitignore忽略本地运行的目录的文件；工作流运行产生的文件不忽略，让其自动推送到仓库）
+def create_output_directory():
+    # 检查环境变量以确定当前的运行环境
+    if os.getenv('GITHUB_ACTIONS') == 'true':
+        output_dir = 'files/workflow_files/'
+    else:
+        output_dir = 'files/local_files/'
+
+    # 创建目录（如果不存在）
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    return output_dir
+
+
 # 需要关闭vpn才能运行request请求！！！
 if __name__ == "__main__":
 
@@ -214,7 +229,7 @@ if __name__ == "__main__":
         raise ValueError("请先设置 xq_a_token 和 u")
 
     # 读取文件中的雪球用户名
-    cname_path = Path(__file__).parent / "files/cname.txt"  # 工作流运行目录Path(__file__).parent
+    cname_path = Path(__file__).parent / "files/cname.txt"  # 工作流运行目录Path(__file__).parent ，即src目录
     cname_list = load_cname(cname_path)
     for cname in cname_list:
         print(f'\n正在查询用户：【{cname}】的自选股和关注列表....')
@@ -241,8 +256,9 @@ if __name__ == "__main__":
             # print('请添加本地文件中文映射方便查看文件！默认UNKOWN')
             user_file_name = userid_tail
 
+        output_dir = create_output_directory()
         # 本地股票文件--stocksMo.json内容以最新关注为首先后排序，而add新增关注则无序。
-        stocks_file = Path(__file__).parent / f"files/stocks{user_file_name}.json"
+        stocks_file = Path(__file__).parent / f"{output_dir}stocks{user_file_name}.json"
         file_diff(stocks_file, watchstock)  # 比较是否有新增关注股票
 
         # 查询某用户的关注列表
@@ -250,5 +266,5 @@ if __name__ == "__main__":
         print(f"总共获取到 {len(all_names)} 个好友名称：{all_names}")
 
         # 本地关注列表文件
-        watch_list_file = Path(__file__).parent / f'files/watchlist{user_file_name}.json'
+        watch_list_file = Path(__file__).parent / f'{output_dir}/watchlist{user_file_name}.json'
         file_diff(watch_list_file, all_names)  # 比较是否有新增关注用户
