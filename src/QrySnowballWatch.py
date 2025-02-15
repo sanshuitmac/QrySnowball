@@ -196,8 +196,8 @@ def file_diff(name, file, result):
             # 在文件名前添加 "_add"，并拼接回扩展名
             added_file = f"{name_part}_add.{ext}"  # file = stocksMo_add.json
             # todo 如有设置tg，推送到tg（或微信）
-            send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'{name}新增关注或自选:{added}')
-            # send_msg(PUSH_TOKEN, f'{name}新增关注或自选', added)
+            send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{name}】 新增关注或自选:{added}')
+            # send_msg(PUSH_TOKEN, f'【{name}】 新增关注或自选', added)
             save_current_result(added_file, added)
         if removed:
             print("减少的关注:", removed)
