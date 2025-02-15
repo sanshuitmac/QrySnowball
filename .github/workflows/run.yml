@@ -41,7 +41,8 @@ jobs:
           git commit -m "Add generated JSON files" || echo "No changes to commit"
           git push
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         # GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
       # 自动提交工作流的文件（文件不能与gitignore冲突，目录从src开始）
 #      - name: Commit and push generated JSON files
