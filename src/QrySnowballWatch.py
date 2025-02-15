@@ -206,8 +206,8 @@ def file_diff(cname, file, result):
                 name_part, ext = str(file).rsplit('.', 1)
                 # 在文件名前添加 "_add"，并拼接回扩展名
                 rm_file = f"{name_part}_rm.{ext}"  # file = stocksMo_rm.json
-                send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{cname}】 减少的关注或自选:{removed}')
-                send_wx_msg(PUSH_TOKEN, f'【{cname}】 新增关注或自选', removed)
+                send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{cname}】 减少的关注或自选：{removed}')
+                send_wx_msg(PUSH_TOKEN, f'【{cname}】 减少的关注或自选：', removed)
                 save_current_result(rm_file, removed)
         else:
             print("关注列表无变化，无需更新。")
