@@ -28,7 +28,6 @@ def load_cname(file_path):
 # 获取自选股
 # https://stock.xueqiu.com/v5/stock/portfolio/stock/list.json?category=1&size=1000&uid=3598214045
 def get_user_watchstock(token, u, uid):
-    """获取雪球用户所有好友的 screen_name（自动翻页）"""
     url = f"https://stock.xueqiu.com/v5/stock/portfolio/stock/list.json?category=1&size=1000&uid={uid}"
     headers = {
         "Accept": "application/json",
@@ -80,7 +79,7 @@ def get_xueqiu_friends_all(token, u, uid):
     # 自动翻页查询
     print("\n正在分页查询关注列表...")
     while True:
-        params = {"page": page, "gid": 0, "uid": uid}
+        params = {"page": page, "count": 200, "gid": 0, "uid": uid}
         response = requests.get(url, params=params, headers=headers)
         if response.status_code != 200:
             print(f"请求失败: {response.status_code}, 响应: {response.text}")
