@@ -152,7 +152,7 @@ def load_previous_result(file_path):
         except Exception as e:
             print(f"读取文件时发生错误: {e}")
             return []  # 发生其他错误时，返回空列表
-    return []  # 如果文件不存在，返回空列表
+    return None  # 如果文件不存在，返回空列表
 
 
 # def ensure_directory_exists(file_path):
@@ -182,35 +182,38 @@ def compare_results(old_result, new_result):
 
 
 # 读取本地文件，比较两次程序运行后，发生变化的列表元素。 file是文件，不是str，没有rsplit方法
-def file_diff(name, file, result):
+def file_diff(cname, file, result):
     # 读取本地存储的上次结果
     previous_result = load_previous_result(file)
-    # 比较新旧结果
-    added, removed = compare_results(previous_result, result)
-    # 如果有变化，打印变更信息并更新本地文件
-    if added or removed:
-        if added:
-            print("新增的关注:", added)
-            # added文件名处理：按最后一个 "." 分割，确保只分割扩展名
-            name_part, ext = str(file).rsplit('.', 1)
-            # 在文件名前添加 "_add"，并拼接回扩展名
-            added_file = f"{name_part}_add.{ext}"  # file = stocksMo_add.json
-            # todo 如有设置tg，推送到tg（或微信）
-            send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{name}】 新增关注或自选:{added}')
-            send_wx_msg(PUSH_TOKEN, f'【{name}】 新增关注或自选', added)
-            save_current_result(added_file, added)
-        if removed:
-            print("减少的关注:", removed)
-            # added文件名处理：按最后一个 "." 分割，确保只分割扩展名
-            name_part, ext = str(file).rsplit('.', 1)
-            # 在文件名前添加 "_add"，并拼接回扩展名
-            rm_file = f"{name_part}_rm.{ext}"  # file = stocksMo_rm.json
-            save_current_result(rm_file, removed)
-
-        # 保存最新结果
-        save_current_result(file, result)
-    else:
-        print("关注列表无变化，无需更新。")
+    # 如果列表不是None（不是第一次运行）
+    if previous_result is not None:
+        # 比较新旧结果
+        added, removed = compare_results(previous_result, result)
+        # 如果有变化，打印变更信息并更新本地文件
+        if added or removed:
+            if added:
+                print("新增的关注:", added)
+                # added文件名处理：按最后一个 "." 分割，确保只分割扩展名
+                name_part, ext = str(file).rsplit('.', 1)
+                # 在文件名前添加 "_add"，并拼接回扩展名
+                added_file = f"{name_part}_add.{ext}"  # file = stocksMo_add.json
+                # todo 如有设置tg，推送到tg（或微信）
+                send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{cname}】 新增关注或自选:{added}')
+                send_wx_msg(PUSH_TOKEN, f'【{cname}】 新增关注或自选', added)
+                save_current_result(added_file, added)
+            if removed:
+                print("减少的关注:", removed)
+                # added文件名处理：按最后一个 "." 分割，确保只分割扩展名
+                name_part, ext = str(file).rsplit('.', 1)
+                # 在文件名前添加 "_add"，并拼接回扩展名
+                rm_file = f"{name_part}_rm.{ext}"  # file = stocksMo_rm.json
+                send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{cname}】 减少的关注或自选:{removed}')
+                send_wx_msg(PUSH_TOKEN, f'【{cname}】 新增关注或自选', removed)
+                save_current_result(rm_file, removed)
+        else:
+            print("关注列表无变化，无需更新。")
+    # 保存最新结果
+    save_current_result(file, result)
 
 
 # github工作流和本地运行，产生的文件放在不同的目录。（gitignore忽略本地运行的目录的文件；工作流运行产生的文件不忽略，让其自动推送到仓库）
