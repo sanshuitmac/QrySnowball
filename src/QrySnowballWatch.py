@@ -255,7 +255,7 @@ def send_telegram_message(bot_token, chat_id, message):
     if response.status_code == 200:
         print("tg消息推送成功!")
     else:
-        print("Failed to send message. Status code:", response.status_code)
+        print("Failed to send tg message. Status code:", response.status_code)
 
 
 # 本地运行，需要关闭vpn才可以！！！ 。每次提交github前，先从github拉取一次，获取最新的workflow产生的json。
