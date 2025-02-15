@@ -8,4 +8,4 @@
 
 5、如果想利用github定时运行（每天上午10点），则：fork此仓库，在Setting --Secrets and Variables--actions-New repository secret中，
 添加：Name为 XQ_A_TOKEN，Secret为上方抓取到的【xq_a_token】值；继续添加Name为XQ_U，Secret为上方抓取到的【u】值。
-脚本每天每天上午10点自动运行，或者点击自己仓库的star也能手动更新。结果请在files——workflow_files目录下的json文件中查看
+脚本每天每天上午10点自动运行，或者点击自己仓库的star也能手动更新。结果请在本github仓库代码中，files——workflow_files目录下的json文件中查看
