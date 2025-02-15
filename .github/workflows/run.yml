@@ -27,6 +27,10 @@ jobs:
         env:
           XQ_A_TOKEN: ${{ secrets.XQ_A_TOKEN }}
           XQ_U: ${{ secrets.XQ_U }}
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          PUSHPLUS_KEY: ${{ secrets.PUSHPLUS_KEY }}  # 未用到
+
         run: python src/QrySnowballWatch.py
 
       - name: Set up Git configuration

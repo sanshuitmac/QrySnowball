@@ -270,7 +270,7 @@ if __name__ == "__main__":
 
     TG_BOT_TOKEN = os.getenv("TG_BOT_TOKEN")
     TG_CHAT_ID = os.getenv("TG_CHAT_ID")
-    # PUSH_TOKEN = os.environ.get("PUSHPLUS_KEY")
+    # PUSH_TOKEN = os.environ.get("PUSHPLUS_KEY")  # 微信pushplus推送未用到，用了tg，有需要可自行取消此行及200行注释启用
 
     # 读取文件中的雪球用户名
     cname_path = Path(__file__).parent / "files/cname.txt"  # 工作流运行目录Path(__file__).parent ，即src目录
