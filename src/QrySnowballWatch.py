@@ -242,6 +242,7 @@ def send_msg(p_token, title, content):
 # 推送tg消息
 def send_telegram_message(bot_token, chat_id, message):
     if not bot_token or not chat_id:
+        print('没有配置tg机器人，无法推送')
         return
     tg_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     data = {
@@ -249,6 +250,7 @@ def send_telegram_message(bot_token, chat_id, message):
         "text": message
     }
     response = requests.post(tg_url, json=data)
+    print(response)
     if response.status_code == 200:
         print("消息推送成功!")
     else:
@@ -270,6 +272,8 @@ if __name__ == "__main__":
     TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN")
     TG_CHAT_ID = os.environ.get("TG_CHAT_ID")
     # PUSH_TOKEN = os.environ.get("PUSHPLUS_KEY")
+    print(TG_BOT_TOKEN)
+    print(TG_CHAT_ID)
 
     # 读取文件中的雪球用户名
     cname_path = Path(__file__).parent / "files/cname.txt"  # 工作流运行目录Path(__file__).parent ，即src目录
