@@ -15,4 +15,4 @@
 
 6、如果想将github定时运行结果推送至tg：需要仓库页面Setting --Secrets and Variables--actions-New repository secret中添加TG_BOT_TOKEN 和 TG_CHAT_ID。查看自己tg bot_token 和 chatid方法自行谷歌。
   如果想将结果github定时运行结果推送至微信：则Setting --Secrets and Variables--actions-New repository secret中添加PUSHPLUS_KEY。 获取pushplus token方法自行百度。
- PS:第一次运行时，如果关注或自选股过多，可能会导致消息过多而推送失败。如果该用户有新增的自选或关注，且不是一次新增大量关注，正常都会将新增部分内容（stockXX_add.json 和 watchlistXX_add.json）进行推送。
+ PS:第一次运行时，不会推送add.json文件。之后每次运行，若该用户有新增的自选或关注，且不是一次新增大量关注，正常都会将新增部分内容（stockXX_add.json 和 watchlistXX_add.json）进行推送。
