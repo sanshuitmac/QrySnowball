@@ -11,3 +11,6 @@
  ②在本仓库页面的 Settings -> Actions -> General 里的Workflow permissions启用 “Read and Write permissions”并勾选： Allow GitHub Actions to create and approve pull requests
 脚本每天每天上午10点自动运行，或者点击自己仓库的star也能手动运行。结果请在本github仓库代码中，files——workflow_files目录下的json文件中查看
 （ps:每次提交github前，先从github拉取一次，获取最新的workflow产生的json文件。 ）
+
+6、如果想将github定时运行结果推送至tg：需要仓库页面Setting --Secrets and Variables--actions-New repository secret中添加TG_BOT_TOKEN 和 TG_CHAT_ID。查看自己tg bot_token 和 chatid方法自行谷歌。
+  如果想将结果github定时运行结果推送至微信：则Setting --Secrets and Variables--actions-New repository secret中添加PUSHPLUS_KEY。 获取pushplus token方法自行百度。
