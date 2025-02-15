@@ -225,7 +225,7 @@ def create_output_directory():
     return output_dir
 
 
-# 需要关闭vpn才能运行request请求！！！
+# 本地运行，需要关闭vpn才可以！！！ 。每次提交github前，先从github拉取一次，获取最新的workflow产生的json。
 if __name__ == "__main__":
 
     # todo 也可set_xueqiu_token方法手动设置 token和自己的uid，也可以环境变量设置
@@ -263,7 +263,7 @@ if __name__ == "__main__":
             user_file_name = 'Luo'
         else:
             # print('请添加本地文件中文映射方便查看文件！默认UNKOWN')
-            user_file_name = userid_tail
+            user_file_name = cname
 
         output_dir = create_output_directory()
         # 本地股票文件--stocksMo.json内容以最新关注为首先后排序，而add新增关注则无序。

@@ -6,6 +6,8 @@
 
 4、如果拉取此仓库到本地电脑运行，可以直接在代码中利用set_xueqiu_token("xxxc", "xxxx")方法手动输入两值后即可运行。结果请在files——local_files目录下的json文件中查看
 
-5、如果想利用github定时运行（每天上午10点），则：fork此仓库，在Setting --Secrets and Variables--actions-New repository secret中，
-添加：Name为 XQ_A_TOKEN，Secret为上方抓取到的【xq_a_token】值；继续添加Name为XQ_U，Secret为上方抓取到的【u】值。
+5、如果想利用github定时运行（每天上午10点），则：
+ ①fork此仓库，在仓库页面Setting --Secrets and Variables--actions-New repository secret中， 添加：Name为 XQ_A_TOKEN，Secret为上方抓取到的【xq_a_token】值；继续添加Name为XQ_U，Secret为上方抓取到的【u】值。
+ ②在本仓库页面的 Settings -> Actions -> General 里的Workflow permissions启用 “Read and Write permissions”并勾选： Allow GitHub Actions to create and approve pull requests
 脚本每天每天上午10点自动运行，或者点击自己仓库的star也能手动更新。结果请在本github仓库代码中，files——workflow_files目录下的json文件中查看
+（ps:每次提交github前，先从github拉取一次，获取最新的workflow产生的json文件。 ）
