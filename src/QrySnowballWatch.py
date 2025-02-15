@@ -182,7 +182,7 @@ def compare_results(old_result, new_result):
 
 
 # 读取本地文件，比较两次程序运行后，发生变化的列表元素。 file是文件，不是str，没有rsplit方法
-def file_diff(file, result):
+def file_diff(name, file, result):
     # 读取本地存储的上次结果
     previous_result = load_previous_result(file)
     # 比较新旧结果
@@ -195,6 +195,8 @@ def file_diff(file, result):
             name_part, ext = str(file).rsplit('.', 1)
             # 在文件名前添加 "_add"，并拼接回扩展名
             added_file = f"{name_part}_add.{ext}"  # file = stocksMo_add.json
+            # todo 如有设置tg，推送到tg（或微信）
+            send_msg(PUSH_TOKEN, f'{name}新增关注或自选', added)
             save_current_result(added_file, added)
         if removed:
             print("减少的关注:", removed)
@@ -212,7 +214,7 @@ def file_diff(file, result):
 
 # github工作流和本地运行，产生的文件放在不同的目录。（gitignore忽略本地运行的目录的文件；工作流运行产生的文件不忽略，让其自动推送到仓库）
 def create_output_directory():
-    # 检查环境变量以确定当前的运行环境
+    # 检查环境变量以确定当前的运行环境。github工作流产生文件放在workflow_files下
     if os.getenv('GITHUB_ACTIONS') == 'true':
         output_dir = 'files/workflow_files/'
     else:
@@ -223,6 +225,17 @@ def create_output_directory():
         os.makedirs(output_dir)
 
     return output_dir
+
+
+# 消息推送
+def send_msg(p_token, title, content):
+    if p_token is None:
+        return
+    url = 'http://www.pushplus.plus/send'
+    r = requests.get(url, params={'token': p_token,
+                                  'title': title,
+                                  'content': content})
+    print(f'通知推送结果：{r.status_code, r.text}')
 
 
 # 本地运行，需要关闭vpn才可以！！！ 。每次提交github前，先从github拉取一次，获取最新的workflow产生的json。
@@ -236,6 +249,8 @@ if __name__ == "__main__":
     u = os.getenv("XQ_U")
     if not xq_a_token or not u:
         raise ValueError("请先设置 xq_a_token 和 u")
+
+    PUSH_TOKEN = os.environ.get("PUSHPLUS_KEY")
 
     # 读取文件中的雪球用户名
     cname_path = Path(__file__).parent / "files/cname.txt"  # 工作流运行目录Path(__file__).parent ，即src目录
@@ -262,18 +277,18 @@ if __name__ == "__main__":
         elif userid_tail == '1661':
             user_file_name = 'Luo'
         else:
-            # print('请添加本地文件中文映射方便查看文件！默认UNKOWN')
             user_file_name = cname
 
         output_dir = create_output_directory()
         # 本地股票文件--stocksMo.json内容以最新关注为首先后排序，而add新增关注则无序。
         stocks_file = Path(__file__).parent / f"{output_dir}stocks{user_file_name}.json"
-        file_diff(stocks_file, watchstock)  # 比较是否有新增关注股票
+        file_diff(cname, stocks_file, watchstock)  # 比较是否有新增关注股票
 
         # 查询某用户的关注列表
         all_names = get_xueqiu_friends_all(xq_a_token, u, user_id)
-        print(f"总共获取到 {len(all_names)} 个好友名称：{all_names}")
+        print(f"总共获取到 {len(all_names)} 个好友")
+        # print(f"总共获取到 {len(all_names)} 个好友名称：{all_names}")
 
         # 本地关注列表文件
         watch_list_file = Path(__file__).parent / f'{output_dir}/watchlist{user_file_name}.json'
-        file_diff(watch_list_file, all_names)  # 比较是否有新增关注用户
+        file_diff(cname, watch_list_file, all_names)  # 比较是否有新增关注用户
