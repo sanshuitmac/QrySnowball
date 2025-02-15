@@ -36,8 +36,9 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git add src/files/*.json
-          git commit -m "Add stocks.json file"
+          cd src/files/workflow_files
+          git add .
+          git commit -m "Add generated JSON files" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
