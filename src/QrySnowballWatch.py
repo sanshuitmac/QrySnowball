@@ -196,7 +196,8 @@ def file_diff(name, file, result):
             # 在文件名前添加 "_add"，并拼接回扩展名
             added_file = f"{name_part}_add.{ext}"  # file = stocksMo_add.json
             # todo 如有设置tg，推送到tg（或微信）
-            send_msg(PUSH_TOKEN, f'{name}新增关注或自选', added)
+            send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'{name}新增关注或自选:{added}')
+            # send_msg(PUSH_TOKEN, f'{name}新增关注或自选', added)
             save_current_result(added_file, added)
         if removed:
             print("减少的关注:", removed)
@@ -227,7 +228,7 @@ def create_output_directory():
     return output_dir
 
 
-# 消息推送
+# 消息推送微信pushplus：需要1元实名认证费用
 def send_msg(p_token, title, content):
     if p_token is None:
         return
@@ -236,6 +237,22 @@ def send_msg(p_token, title, content):
                                   'title': title,
                                   'content': content})
     print(f'通知推送结果：{r.status_code, r.text}')
+
+
+# 推送tg消息
+def send_telegram_message(bot_token, chat_id, message):
+    if not bot_token or not chat_id:
+        return
+    tg_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    data = {
+        "chat_id": chat_id,
+        "text": message
+    }
+    response = requests.post(tg_url, json=data)
+    if response.status_code == 200:
+        print("消息推送成功!")
+    else:
+        print("Failed to send message. Status code:", response.status_code)
 
 
 # 本地运行，需要关闭vpn才可以！！！ 。每次提交github前，先从github拉取一次，获取最新的workflow产生的json。
@@ -250,7 +267,9 @@ if __name__ == "__main__":
     if not xq_a_token or not u:
         raise ValueError("请先设置 xq_a_token 和 u")
 
-    PUSH_TOKEN = os.environ.get("PUSHPLUS_KEY")
+    TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN")
+    TG_CHAT_ID = os.environ.get("TG_CHAT_ID")
+    # PUSH_TOKEN = os.environ.get("PUSHPLUS_KEY")
 
     # 读取文件中的雪球用户名
     cname_path = Path(__file__).parent / "files/cname.txt"  # 工作流运行目录Path(__file__).parent ，即src目录
