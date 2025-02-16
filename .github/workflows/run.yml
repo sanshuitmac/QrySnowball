@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # IMPORTANT: Set cron job in UTC timezone 。+8才是北京时间，每天10点05分
-    - cron: '05 2 * * *'
+    - cron: '05 2,14 * * *'
   watch:
     types: started
 
