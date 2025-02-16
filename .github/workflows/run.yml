@@ -1,12 +1,18 @@
 # github actions的yml配置文件
 name: qrySnowballWatch
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
   schedule:
     # IMPORTANT: Set cron job in UTC timezone 。+8才是北京时间，每天10点05分
     - cron: '05 2,14 * * *'
   watch:
     types: started
+
+#permissions:
+#  contents: write  # 授予 GITHUB_TOKEN 对内容的写入权限，则无需手动setting
 
 jobs:
   run-python-script:
