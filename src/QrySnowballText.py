@@ -5,7 +5,7 @@ from datetime import datetime
 import configparser
 from pathlib import Path
 
-# 此程序在gcp-tw上每6分钟跑，获取某人专栏、发文、回复
+# todo 此程序在gcp-tw上每6分钟跑，获取某人专栏、发文、回复。主项目在pycheck项目，修改主要在那边，此QrySnowBall的这个是备份。
 
 # todo 登录后浏览器获取xq_a_token
 # ios手机可用stream抓取app上的xq_a_token和uid：u
