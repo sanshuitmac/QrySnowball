@@ -194,24 +194,22 @@ def deal_timeline(json_data, file_all, file_add, msg_token,username):
                 if line.startswith("ID:"):
                     existing_ids.add(line.strip().split(":", 1)[1])
 
-    new_entries_count = 0
     # 分别写入 result.txt（file_all全部） 和 add.txt（file_add新增）
     with open(file_all, "a", encoding="utf-8") as result_file, \
             open(file_add, "w", encoding="utf-8") as add_file:
         for post_id, content in new_items:
-            entry = f"ID:{post_id}\n{NOW}{content}\n---\n"
+            entry = f"ID:{post_id}\n{content}\n---\n"
             if post_id not in existing_ids:
-                new_entries_count += 1
                 add_file.write(entry)  # 只写新增部分
                 send_wx_msg(msg_token, f'【{username}】专栏文章新增：', entry)  # todo 发送微信推送，第一次运行内容太多，先屏蔽以下2行推送
                 send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{username}】专栏文章新增：{entry}')  # tg推送
                 result_file.write(entry)  # 新增也写入总记录
 
-    print(f"✅《专栏》处理完成。本次新增 {new_entries_count} 条。新增内容写入 {file_add}，全部记录写入 {file_all}。")
+    print(f"✅《专栏》处理完成。新增内容（如有）写入 {file_add}，全部记录写入 {file_all}。")
 
 
-# 处理某用户“发文、回复”响应中的发文的json 并推送新增发文
-def deal_reply_text(json_data, file_all, file_add, msg_token, username):
+# 处理某用户“发文、回复”响应中的发文的json 并推送新增发文----todo 有bug，先遍历原all将新增放集合，再遍历次新增集合写入原all文件，会有异常。已弃用此bk。gemini2.5pro指出
+def deal_reply_text(json_data, file_all, file_add, msg_token,username):
     # 读取历史记录中的 ID（避免重复）
     existing_ids = set()
     if os.path.exists(file_all):
@@ -220,36 +218,34 @@ def deal_reply_text(json_data, file_all, file_add, msg_token, username):
                 if line.startswith("ID:"):
                     existing_ids.add(line.strip().split(":", 1)[1])
 
-    new_entries_count = 0
-    # 打开文件，准备写入
+    # 处理数据
+    new_entries = []
+    for item in json_data.get("statuses", []):
+        post_id = str(item.get("id"))
+        description = item.get("description", "")
+        title = item.get("title", "").strip()
+        text = item.get("text", "").strip()
+        time_str = item.get("timeBefore", "").strip()
+
+        # 过滤规则：跳过含“回复”或“@”的内容
+        if "回复" in description and "@" in description:
+            continue
+
+        # 如果是新 ID，则加入结果列表
+        if post_id not in existing_ids:
+            entry = f"ID:{post_id}\n标题：{time_str},{title}\n{text}\n---\n"
+            new_entries.append((post_id, entry))
+
+    # 写入文件
     with open(file_all, "a", encoding="utf-8") as result_file, \
             open(file_add, "w", encoding="utf-8") as add_file:
+        for post_id, entry in new_entries:
+            result_file.write(entry)
+            send_wx_msg(msg_token, f'【{username}】新增发文/回复：', entry)  # todo 发送微信推送，第一次运行内容太多，先屏蔽以下2行推送
+            send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{username}】新增发文/回复：：{entry}')
+            add_file.write(entry)
 
-        # 遍历从API获取的所有 statuses
-        for item in json_data.get("statuses", []):
-            post_id = str(item.get("id"))
-
-            # 在循环内部，直接判断是否为新ID
-            if post_id not in existing_ids:
-                description = item.get("description", "")
-                title = item.get("title", "").strip()
-                text = item.get("text", "").strip()
-                time_str = item.get("timeBefore", "").strip()
-
-                # 过滤规则：跳过含“回复”或“@”的内容
-                if "回复" in description and "@" in description:
-                    continue
-                new_entries_count += 1
-                # 构建要写入的内容
-                entry = f"ID:{post_id}\n{NOW} 标题：{time_str},{title}\n{text}\n---\n"
-
-                # 按顺序执行所有操作：写入、推送、再写入
-                add_file.write(entry)  # 写入新增文件
-                send_wx_msg(msg_token, f'【{username}】新增发文/回复：', entry)   # todo 发送微信推送，第一次运行内容太多，先屏蔽以下2行推送
-                send_telegram_message(TG_BOT_TOKEN, TG_CHAT_ID, f'【{username}】新增发文/回复：{entry}')
-                result_file.write(entry)  # 追加写入 all 文件
-
-    print(f"✅《发文/回复》处理完成。本次新增 {new_entries_count} 条，已写入 {file_add} 和 {file_all}。")
+    print(f"✅《发文/回复》处理完成。本次新增 {len(new_entries)} 条，已写入 {file_add} 和 {file_all}。")
 
 
 # 本地运行，需要关闭vpn才可以！！！ 。每次提交github前，先从github拉取一次，获取最新的workflow产生的json。
